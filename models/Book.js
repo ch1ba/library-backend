@@ -17,9 +17,13 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.INTEGER,
             allowNull: false,
         },
-        genre: {
-            type: Sequelize.STRING(50),
+        genre_id: { 
+            type: Sequelize.INTEGER,
             allowNull: false,
+            references: {
+                model: 'Genres',
+                key: 'id',
+            },
         },
         publication_year: {
             type: Sequelize.INTEGER,

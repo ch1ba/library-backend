@@ -4,8 +4,10 @@ const { Op } = require('sequelize');
 
 
 // Получение всех книг (если есть то с сортом)
+
 exports.findAll = (req, res) => {
     const titleFilter = req.query.title;  // Получаем параметр title из запроса
+    const genreIdFilter = req.query.genreId; // Получаем параметр genreId из запроса
     const sortParam = req.query.sortBy;   // Получаем параметр sortBy из запроса
 
     let order = [];
@@ -20,14 +22,27 @@ exports.findAll = (req, res) => {
         }
     }
 
-    // Выполняем запрос на получение всех книг с фильтрацией по заголовку и заданной сортировкой
+    // Создаем объект where для фильтрации
+    const whereConditions = {};
+    
+    // Добавляем фильтрацию по заголовку, если он передан
+    if (titleFilter) {
+        whereConditions.title = { [Op.like]: `%${titleFilter}%` }; // Фильтрация по заголовку
+    }
+
+    // Добавляем фильтрацию по жанру, если он передан
+    if (genreIdFilter) {
+        whereConditions.genre_id = genreIdFilter; // Исправлено на genre_id
+    }
+
+    // Выполняем запрос на получение всех книг с фильтрацией и заданной сортировкой
     Book.findAll({
-        where: titleFilter ? { title: { [Op.like]: `%${titleFilter}%` } } : {}, // Фильтрация по заголовку
+        where: whereConditions,
         order: order
     })
     .then(objects => {
-        if (objects.length === 0 && titleFilter) {
-            return globalFunctions.sendResult(res, { message: "Книги с таким названием не найдены." });
+        if (objects.length === 0 && (titleFilter || genreIdFilter)) {
+            return globalFunctions.sendResult(res, { message: "Книги не найдены." });
         }
         globalFunctions.sendResult(res, objects);  
     })
@@ -35,6 +50,8 @@ exports.findAll = (req, res) => {
         globalFunctions.sendError(res, err);  
     });
 };
+
+
 
 exports.findOne = (req, res) => {
     const id = req.params.id;

@@ -23,6 +23,9 @@ app.use(cors(corsOptions));
 var book = require('./routes/book.route');
 book(app);
 
+var genres = require('./routes/genre.route');
+genres(app);
+
 const authRoutes = require('./routes/auth');
 
 app.use('/api/auth', authRoutes);
