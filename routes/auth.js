@@ -2,14 +2,14 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { User } = require('../models');
-const authMiddleware = require("../middleware/authMiddle"); // Импортируем middleware
+const authMiddleware = require("../middleware/authMiddle"); 
 
 const router = express.Router();
-const SECRET_KEY = "your_secret_key"; // Используйте переменные окружения в реальном проекте!
+const SECRET_KEY = "pip"; 
 
 // Регистрация пользователя
 router.post("/register", async (req, res) => {
-    console.log("Запрос на регистрацию:", req.body); // Логируем тело запроса
+    console.log("Запрос на регистрацию:", req.body); 
 
     const { name, email, phone, password } = req.body;
 
@@ -43,21 +43,19 @@ router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Проверка, существует ли пользователь
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ where: { email: email} });
+    console.log(user.name);
     if (!user) {
       return res.status(404).json({ message: "Пользователь не найден" });
     }
 
-    // Проверка пароля
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Неверный пароль" });
     }
 
-    // Генерация JWT
-    const token = jwt.sign({ id: user._id, email: user.email }, SECRET_KEY, {
-      expiresIn: "1h", // Токен действует 1 час
+    const token = jwt.sign({ email: user.email, id: user.id}, SECRET_KEY, {
+      expiresIn: "1h", 
     });
 
     res.json({ token });
@@ -66,25 +64,21 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// Получение информации о пользователе (защищенный маршрут)
+// Получение информации о пользователе
 router.get("/profile", authMiddleware, async (req, res) => {
   try {
-    // Используем информацию о пользователе из middleware
-    const userId = req.user.id;
-    
-    // Находим пользователя по ID
-    const user = await User.findById(userId).select("-password"); // Исключаем пароль из ответа
+    const userId = req.user.id; 
+    const user = await User.findByPk(userId)
 
     if (!user) {
       return res.status(404).json({ message: "Пользователь не найден" });
     }
 
     res.json({
-      id: user._id,
+      id: user.id,
       name: user.name,
+      phone: user.phone,
       email: user.email,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
     });
   } catch (error) {
     res.status(500).json({ message: "Ошибка сервера" });

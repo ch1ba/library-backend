@@ -1,6 +1,6 @@
-const { Book } = require('../models'); // Импортируем модель Book
+const { Book } = require('../models'); 
 var globalFunctions = require('../config/global.functions.js');
-const { Op } = require('sequelize'); // Импортируем операторы Sequelize
+const { Op } = require('sequelize'); 
 
 
 // Получение всех книг (если есть то с сортом)
@@ -29,10 +29,10 @@ exports.findAll = (req, res) => {
         if (objects.length === 0 && titleFilter) {
             return globalFunctions.sendResult(res, { message: "Книги с таким названием не найдены." });
         }
-        globalFunctions.sendResult(res, objects);  // Возвращаем найденные книги
+        globalFunctions.sendResult(res, objects);  
     })
     .catch(err => {
-        globalFunctions.sendError(res, err);  // Обрабатываем ошибки
+        globalFunctions.sendError(res, err);  
     });
 };
 
