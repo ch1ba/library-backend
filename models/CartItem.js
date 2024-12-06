@@ -13,6 +13,14 @@ module.exports = (sequelize, DataTypes) => {
           key: 'id',
         },
       },
+      user_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Users',
+          key: 'id',
+        },
+      },
       book_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -21,10 +29,13 @@ module.exports = (sequelize, DataTypes) => {
           key: 'id',
         },
       },
-      count: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 1,
+      book_name: {
+        type: DataTypes.STRING, // Тип данных для названия книги
+        allowNull: false,       // Устанавливаем поле как обязательное
+      },
+      book_author: {
+        type: DataTypes.STRING, // Тип данных для названия книги
+        allowNull: false,       // Устанавливаем поле как обязательное
       },
     });
   

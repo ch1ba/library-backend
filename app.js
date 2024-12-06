@@ -26,6 +26,12 @@ book(app);
 var genres = require('./routes/genre.route');
 genres(app);
 
+var carts = require('./routes/cart.route');
+carts(app);
+
+var cartsItems = require('./routes/cartItem.route')
+cartsItems(app);
+
 const authRoutes = require('./routes/auth');
 
 app.use('/api/auth', authRoutes);
